@@ -1,0 +1,19 @@
+{
+    "name": "Talk-Secure — Encrypted Messaging",
+    "short_name": "Talk-Secure",
+    "description": "Zero-trust end-to-end encrypted personal messaging",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0a0e1a",
+    "theme_color": "#6366f1",
+    "categories": ["social", "communication", "security"],
+    "icons": [
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

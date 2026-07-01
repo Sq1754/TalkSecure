@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Talk-Secure — Zero-trust end-to-end encrypted personal messaging">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Talk-Secure</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Talk-Secure">
+    <link rel="apple-touch-icon" href="/TalkSecureLogo.png">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/TalkSecureLogo.png">
+</head>
+
+<body>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- AUTH VIEW                               -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="auth-view" class="view active">
+        <div class="auth-container">
+            <div class="auth-brand">
+                <div class="brand-icon" style="animation: none; filter: none; width: 80px; height: 80px; border-radius: 0; background: transparent; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <img src="/TalkSecureLogo.png" alt="Talk-Secure" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <h1>Talk-Secure</h1>
+                <p class="brand-tagline">End-to-end encrypted messaging</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button id="login-tab" class="auth-tab active">Login</button>
+                <button id="register-tab" class="auth-tab">Register</button>
+            </div>
+
+            <div id="auth-error" class="auth-message error"></div>
+            <div id="auth-success" class="auth-message success"></div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" autocomplete="username" required minlength="3" maxlength="20"
+                        placeholder="Enter your username">
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" autocomplete="current-password" required minlength="8"
+                        placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">→</span>
+                    Login
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="input-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" autocomplete="username" required minlength="3" maxlength="20"
+                        placeholder="Choose a username">
+                </div>
+                <div class="input-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" required placeholder="Enter your email address">
+                </div>
+                <div class="input-group">
+                    <label for="reg-phone">Phone Number</label>
+                    <input type="tel" id="reg-phone" required placeholder="e.g. +1234567890">
+                </div>
+                <div class="input-group">
+                    <label for="reg-invite">Invite Token <span style="font-weight: 400; color: var(--text-muted); font-size: 12px;">(Optional)</span></label>
+                    <input type="text" id="reg-invite" placeholder="TS-XXXX-XXXX">
+                    <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">Required for existing platforms. Leave empty if you're the first user.</small>
+                </div>
+                <div class="input-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" autocomplete="new-password" required minlength="8"
+                        placeholder="Min 8 chars, A-z, 0-9, !@#">
+                    <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">Must include uppercase, lowercase, digit & special character</small>
+                </div>
+                <div class="input-group">
+                    <label for="reg-confirm-password">Confirm Password</label>
+                    <input type="password" id="reg-confirm-password" autocomplete="new-password" required minlength="8"
+                        placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">+</span>
+                    Create Account
+                </button>
+            </form>
+
+            <!-- OTP Verification Form -->
+            <form id="otp-form" class="auth-form">
+                <div class="input-group">
+                    <label for="otp-code">Verification Code</label>
+                    <input type="text" id="otp-code" required pattern="[0-9]{6}" inputmode="numeric" maxlength="6"
+                        placeholder="6-digit OTP code" style="letter-spacing: 4px; text-align: center; font-size: 18px; font-weight: 600;">
+                    <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block; text-align: center;">Enter the 6-digit code sent to your email and phone.</small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 15px;">
+                    <span class="btn-icon">✓</span>
+                    Verify & Register
+                </button>
+                <button type="button" id="otp-cancel-btn" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">
+                    Cancel
+                </button>
+            </form>
+
+
+            <div class="auth-footer">
+                <div class="security-badges">
+                    <span class="badge">🔐 AES-256-GCM</span>
+                    <span class="badge">🔑 ECDH P-256</span>
+                    <span class="badge">🛡️ bcrypt-12</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- CHAT VIEW                               -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="chat-view" class="view">
+        <!-- Sidebar: Contact List -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+        <aside id="contacts-sidebar" class="contacts-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="/TalkSecureLogo.png" alt="Talk-Secure" class="sidebar-logo" style="width: 26px; height: 26px; object-fit: contain; flex-shrink: 0;">
+                    <span class="sidebar-title">Talk-Secure</span>
+                </div>
+                <button id="close-sidebar-btn" class="icon-btn close-sidebar-btn" title="Close Sidebar" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                <button id="add-contact-btn" class="icon-btn" title="Add Contact">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <line x1="20" y1="8" x2="20" y2="14" />
+                        <line x1="23" y1="11" x2="17" y2="11" />
+                    </svg>
+                </button>
+                <button id="logout-btn" class="icon-btn" title="Logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-user-info">
+                <span class="sidebar-logged-in">Logged in as <strong id="current-user">—</strong></span>
+            </div>
+            <div class="contacts-list-header">
+                <span>Contacts</span>
+                <span id="contacts-count" class="contacts-count">0</span>
+            </div>
+            <div id="contacts-list" class="contacts-list">
+                <div class="contacts-empty">No other users yet. Share the link!</div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <button id="sidebar-toggle" class="icon-btn sidebar-toggle-btn" title="Contacts">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+                            height="20">
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <div class="peer-info">
+                        <h2 id="peer-name">Select a contact</h2>
+                        <span id="peer-status" class="peer-status">—</span>
+                    </div>
+                </div>
+
+                <div class="header-center">
+                    <div id="encryption-status" class="encryption-status waiting">
+                        ⏳ Select a contact to start
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div id="connection-status" class="connection-status connecting">Connecting...</div>
+                    <button id="video-call-btn" class="icon-btn call-btn" title="Video Call" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+                            height="20">
+                            <polygon points="23 7 16 12 23 17 23 7" />
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                        </svg>
+                    </button>
+                    <button id="chat-search-btn" class="icon-btn" title="Search Chat" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <div class="chat-menu-dropdown">
+                        <button id="chat-menu-btn" class="icon-btn" title="Chat Options" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                                <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <div id="chat-menu-content" class="dropdown-content">
+                            <button id="menu-clear-history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>Clear History</button>
+                            <button id="menu-rotate-keys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>Rotate Keys</button>
+                            <button id="menu-submit-feedback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Submit Feedback</button>
+                            <button id="menu-contact-support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Contact Support</button>
+                            <button id="menu-admin-dashboard" style="display: none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Admin Dashboard</button>
+                            <button id="menu-toggle-security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="menu-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Security Details</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="key-rotation-alert-banner" class="key-rotation-alert" style="display: none; background: rgba(245, 158, 11, 0.08); border-bottom: 1px solid rgba(245, 158, 11, 0.2); padding: 12px 20px; align-items: center; justify-content: space-between; gap: 16px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 5;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">⚠️</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 13px; font-weight: 600; color: #d97706; font-family: 'Outfit', sans-serif;">Cryptographic Identity Age Warning</span>
+                        <span id="key-rotation-alert-text" style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Your E2E identity key is older than 30 days. To ensure peak forward secrecy, we recommend rotating your keys.</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                    <button id="banner-rotate-keys-btn" class="btn btn-warning" style="padding: 6px 12px; font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; height: auto;">Rotate Keys</button>
+                    <button id="banner-close-btn" class="icon-btn" style="padding: 4px; color: #a0aec0;" title="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                </div>
+            </div>
+
+            <!-- Sliding Search Bar -->
+            <div id="chat-search-bar" class="chat-search-bar">
+                <div class="search-input-container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="chat-search-input" placeholder="Search in chat history...">
+                    <button id="chat-search-close" class="chat-search-close" title="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                </div>
+            </div>
+
+            <!-- Security Panel (hidden by default) -->
+            <div id="security-panel" class="security-panel">
+                <div class="security-panel-content">
+                    <h3>🛡️ Security Details</h3>
+                    <div class="fingerprint-section">
+                        <div class="fingerprint-block">
+                            <label>Your Key Fingerprint</label>
+                            <code id="own-fingerprint">Generating...</code>
+                        </div>
+                        <div class="fingerprint-block">
+                            <label>Peer's Key Fingerprint</label>
+                            <code id="peer-fingerprint">Waiting...</code>
+                        </div>
+                    </div>
+                    <p class="fingerprint-hint">
+                        Compare these fingerprints with your peer out-of-band (e.g., phone call) to verify their
+                        identity.
+                    </p>
+                    <div class="security-info">
+                        <div class="info-row">
+                            <span class="info-label">Encryption</span>
+                            <span class="info-value">AES-256-GCM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Key Exchange</span>
+                            <span class="info-value">ECDH P-256</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Forward Secrecy</span>
+                            <span class="info-value">Per-session keys</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Message Retention</span>
+                            <span class="info-value">14 days auto-delete</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Server Knowledge</span>
+                            <span class="info-value">Zero (encrypted relay)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <main class="chat-body">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="empty-chat">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="64"
+                                height="64">
+                                <rect x="8" y="28" width="48" height="32" rx="4" stroke="currentColor" stroke-width="2"
+                                    opacity="0.3" />
+                                <path d="M20 28V20C20 13.373 25.373 8 32 8C38.627 8 44 13.373 44 20V28"
+                                    stroke="currentColor" stroke-width="2" opacity="0.3" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <p>Messages are end-to-end encrypted.</p>
+                        <p class="muted">Select a contact to start a secure conversation.</p>
+                    </div>
+                </div>
+
+                <div id="typing-indicator" class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-text">typing...</span>
+                </div>
+            </main>
+
+            <!-- Message Input -->
+            <footer class="chat-footer">
+                <!-- File Upload Progress (Hidden by default) -->
+                <div id="upload-progress-container" class="upload-progress-container">
+                    <span id="upload-filename" class="upload-filename">encrypting...</span>
+                    <div class="progress-bar-bg">
+                        <div id="upload-progress-bar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div class="input-bar">
+                    <input type="file" id="file-attachment-input" style="display: none;">
+                    <button id="attachment-btn" class="attachment-btn" disabled title="Attach File (Max 100MB)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+                            height="20">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                        </svg>
+                    </button>
+                    <textarea id="message-input" placeholder="Select a contact to start..." rows="1"
+                        disabled></textarea>
+                    <button id="voice-record-btn" class="voice-record-btn" disabled title="Record Voice Message">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                        </svg>
+                    </button>
+                    <button id="send-btn" class="send-btn" style="display: none;" disabled title="Send (Enter)">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- VIDEO CALL OVERLAY (Mobile-First)      -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="call-overlay" class="call-overlay">
+        <div class="call-videos" id="call-videos">
+            <video id="remote-video" class="remote-video" autoplay playsinline></video>
+            <video id="local-video" class="local-video" autoplay playsinline muted></video>
+
+            <!-- Tap-to-swap hint (shows briefly on mobile) -->
+            <div id="swap-hint" class="swap-hint">Tap to swap videos</div>
+        </div>
+
+        <!-- Top status bar with gradient -->
+        <div class="call-status-bar">
+            <div class="call-encryption-badge">
+                🔒 Encrypted
+            </div>
+            <div class="call-status-center">
+                <span id="call-status-text" class="call-status-text">Connecting...</span>
+                <span id="call-timer" class="call-timer"></span>
+            </div>
+            <div id="call-quality" class="call-quality" title="Connection quality">
+                <span class="quality-bar"></span>
+                <span class="quality-bar"></span>
+                <span class="quality-bar"></span>
+            </div>
+        </div>
+
+        <!-- Bottom controls bar -->
+        <div class="call-controls">
+            <button id="flip-camera-btn" class="call-control-btn" title="Flip Camera">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <path d="M20 16v4a2 2 0 0 1-2 2h-4m-4 0H6a2 2 0 0 1-2-2v-4m0-4V4a2 2 0 0 1 2-2h4m4 0h4a2 2 0 0 1 2 2v4"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                </svg>
+            </button>
+            <button id="toggle-mute-btn" class="call-control-btn" title="Mute/Unmute">
+                <svg id="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24"
+                    height="24">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
+                </svg>
+            </button>
+            <button id="end-call-btn" class="call-control-btn end-call" title="End Call">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path
+                        d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 0 1-.01-1.36c3.36-3.45 8.02-5.59 13.17-5.59 5.15 0 9.81 2.14 13.17 5.59.37.38.37.99-.01 1.36l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85a.994.994 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" />
+                </svg>
+            </button>
+            <button id="toggle-video-btn" class="call-control-btn" title="Camera On/Off">
+                <svg id="video-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24"
+                    height="24">
+                    <polygon points="23 7 16 12 23 17 23 7" />
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+            </button>
+            <button id="swap-video-btn" class="call-control-btn" title="Swap Videos">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <polyline points="17 1 21 5 17 9"></polyline>
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                    <polyline points="7 23 3 19 7 15"></polyline>
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- INCOMING CALL MODAL                     -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="incoming-call-modal" class="incoming-call-modal">
+        <div class="incoming-call-content">
+            <div class="incoming-call-animation">
+                <div class="call-ring ring-1"></div>
+                <div class="call-ring ring-2"></div>
+                <div class="call-ring ring-3"></div>
+                <div class="caller-avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                    </svg>
+                </div>
+            </div>
+            <h3 id="caller-name">Incoming Call</h3>
+            <p class="incoming-call-subtitle">Encrypted Video Call</p>
+            <div class="incoming-call-actions">
+                <button id="reject-call-btn" class="call-action-btn reject">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                        <path
+                            d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 0 1-.01-1.36c3.36-3.45 8.02-5.59 13.17-5.59 5.15 0 9.81 2.14 13.17 5.59.37.38.37.99-.01 1.36l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85a.994.994 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" />
+                    </svg>
+                    <span>Decline</span>
+                </button>
+                <button id="accept-call-btn" class="call-action-btn accept">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                        <path
+                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+                    </svg>
+                    <span>Accept</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts (order matters) -->
+    <script src="/js/crypto.js"></script>
+    <script src="/js/keystore.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/websocket.js"></script>
+    <script src="/js/webrtc.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/pwa.js"></script>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ADD CONTACT MODAL                       -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="add-contact-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔍 Add Contact</h3>
+                <button id="add-contact-modal-close" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Search users by username or phone number to add them as contacts.</p>
+                <div class="input-group search-group">
+                    <input type="text" id="contact-search-input" placeholder="Search username or phone..." autocomplete="off">
+                </div>
+                <div id="contact-search-results" class="contact-search-results">
+                    <div class="results-empty">Type to start searching...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SUBMIT FEEDBACK MODAL                   -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 Submit Feedback</h3>
+                <button id="feedback-modal-close" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <form id="feedback-form" class="modal-body">
+                <p class="modal-subtitle">Help us improve Talk-Secure. Share your thoughts or suggestions.</p>
+                <div class="input-group">
+                    <label>Rating</label>
+                    <div class="feedback-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <input type="hidden" id="feedback-rating-val" value="5">
+                </div>
+                <div class="input-group">
+                    <label for="feedback-message">Message</label>
+                    <textarea id="feedback-message" required placeholder="Tell us what you think..." rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SUBMIT SUPPORT TICKET MODAL             -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="support-ticket-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎟️ Submit Support Ticket</h3>
+                <button id="support-ticket-modal-close" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <form id="support-ticket-form" class="modal-body">
+                <p class="modal-subtitle">Open a secure, zero-knowledge support channel directly with the administrators.</p>
+                <div class="input-group">
+                    <label for="support-ticket-category">Category</label>
+                    <select id="support-ticket-category" required style="width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 12px; font-family: inherit; font-size: 14px; background: var(--bg-secondary); color: var(--text-primary);">
+                        <option value="Account Issues">Account & Login Issues</option>
+                        <option value="Security">Security & Key Exchanges</option>
+                        <option value="Bug Report">Bug Reports & Malfunctions</option>
+                        <option value="General Help">General Support</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="support-ticket-description">Issue Description</label>
+                    <textarea id="support-ticket-description" required placeholder="Describe your issue in detail. Your message is E2E encrypted before being dispatched..." rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Support Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ADMIN VIEW (Admin Cockpit)              -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="admin-view" class="view">
+        <div class="admin-container">
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <button id="admin-back-btn" class="icon-btn" title="Back to Chat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                    <h1>Admin Cockpit</h1>
+                </div>
+                <div class="admin-header-right">
+                    <button id="admin-refresh-btn" class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="btn-icon">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                        </svg>
+                        Refresh Data
+                    </button>
+                </div>
+            </header>
+
+            <!-- Overview Metrics Grid -->
+            <div class="admin-metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon users-icon">👥</div>
+                    <div class="metric-data">
+                        <span id="metric-total-users" class="metric-val">0</span>
+                        <span class="metric-label">Total Users</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon active-icon">⚡</div>
+                    <div class="metric-data">
+                        <span id="metric-active-users" class="metric-val">0</span>
+                        <span class="metric-label">Active Users (24h)</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon msgs-icon">✉️</div>
+                    <div class="metric-data">
+                        <span id="metric-total-messages" class="metric-val">0</span>
+                        <span class="metric-label">Messages Relayed</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon rating-icon">⭐</div>
+                    <div class="metric-data">
+                        <span id="metric-avg-rating" class="metric-val">0.0</span>
+                        <span class="metric-label">Average Rating</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-target="admin-users-tab">User Management</button>
+                <button class="admin-tab" data-target="admin-invites-tab">Invite Manager</button>
+                <button class="admin-tab" data-target="admin-broadcasts-tab">System Broadcasts</button>
+                <button class="admin-tab" data-target="admin-helpdesk-tab">System Helpdesk</button>
+                <button class="admin-tab" data-target="admin-diagnostics-tab">Diagnostics</button>
+                <button class="admin-tab" data-target="admin-security-tab">Security Audits</button>
+                <button class="admin-tab" data-target="admin-feedback-tab">Feedback Hub</button>
+                <button class="admin-tab" data-target="admin-logs-tab">Audit Trails</button>
+            </div>
+
+            <!-- Tab Content: User Management -->
+            <div id="admin-users-tab" class="admin-tab-content active">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Stored Key</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Invite Manager -->
+            <div id="admin-invites-tab" class="admin-tab-content">
+                <div class="invite-generation-card">
+                    <div class="card-body">
+                        <h3>🔑 Generate Secure Invite Token</h3>
+                        <p class="muted">Generate single-use token links to invite new trusted users to join the platform.</p>
+                        <div class="invite-actions">
+                            <button id="admin-generate-invite-btn" class="btn btn-primary">Generate Invite Token</button>
+                        </div>
+                        <div id="admin-generated-invite-container" class="generated-invite-container" style="display: none;">
+                            <span class="invite-label">Token generated:</span>
+                            <div class="invite-link-copy-wrapper">
+                                <code id="admin-generated-invite-val">TS-XXXX-XXXX</code>
+                                <button id="admin-copy-invite-btn" class="btn btn-secondary btn-sm" title="Copy Invite Link">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 24px;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Token</th>
+                                <th>Created By</th>
+                                <th>Status</th>
+                                <th>Redeemer</th>
+                                <th>Created At</th>
+                                <th>Redeemed At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-invites-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: System Broadcasts -->
+            <div id="admin-broadcasts-tab" class="admin-tab-content">
+                <div class="invite-generation-card">
+                    <div class="card-body">
+                        <h3>📣 Secure E2E System Broadcast</h3>
+                        <p class="muted">Send a system-wide announcement to all registered users. The message is encrypted client-side using each recipient's public key, preserving absolute end-to-end secrecy. The server only routes the encrypted packets.</p>
+                        
+                        <div class="input-group" style="margin-top: 16px;">
+                            <label for="admin-broadcast-message">Broadcast Message</label>
+                            <textarea id="admin-broadcast-message" placeholder="Type your system announcement here..." rows="5" style="width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 12px; font-family: inherit; font-size: 14px; background: var(--bg-secondary); color: var(--text-primary); resize: vertical; box-sizing: border-box;"></textarea>
+                        </div>
+                        
+                        <div class="broadcast-actions" style="margin-top: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                            <button id="admin-send-broadcast-btn" class="btn btn-primary">
+                                <span class="btn-icon">📣</span> Send Broadcast
+                            </button>
+                            <span id="broadcast-status-label" class="broadcast-status-label muted" style="font-size: 14px; font-weight: 500; color: var(--text-secondary);"></span>
+                        </div>
+                        
+                        <!-- Progress bar/stats for the broadcast transmission -->
+                        <div id="broadcast-progress-container" class="broadcast-progress-container" style="display: none; margin-top: 20px; background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                            <div class="progress-bar-bg" style="height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; position: relative;">
+                                <div id="broadcast-progress-bar" class="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); transition: width 0.2s ease;"></div>
+                            </div>
+                            <div class="broadcast-progress-stats" style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-secondary);">
+                                <span id="broadcast-progress-text">Encrypted: 0/0 users</span>
+                                <span id="broadcast-progress-percent" style="font-weight: 600; color: var(--text-primary);">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: System Helpdesk -->
+            <div id="admin-helpdesk-tab" class="admin-tab-content">
+                <div class="admin-metrics-grid" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: var(--accent-glow); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎟️</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-total-tickets" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Total Tickets</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(239, 68, 68, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🔴</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-open-tickets" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Open Tickets</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(52, 211, 153, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🟢</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-resolved-tickets" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Resolved Tickets</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>User</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Resolved At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-tickets-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Performance Diagnostics -->
+            <div id="admin-diagnostics-tab" class="admin-tab-content">
+                <div class="admin-metrics-grid" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(59, 130, 246, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">💾</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-memory-usage" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0 MB</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Memory Footprint</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(168, 85, 247, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🔌</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-active-sockets" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Active WebSockets</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: var(--accent-glow); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">⚡</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-avg-rtt" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0.0 ms</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Avg Signaling RTT</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(236, 72, 153, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📞</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-avg-webrtc" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0.0 ms</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Avg Call Setup</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom SVG Sparkline Graph -->
+                <div class="invite-generation-card" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <h3 style="color: var(--text-primary);">📈 Transport Quality History</h3>
+                        <p class="muted" style="color: var(--text-secondary);">Signaling latency and media agreement RTT fluctuations over the last 30 operational events.</p>
+                        
+                        <div class="chart-wrapper" style="height: 200px; margin-top: 20px; position: relative; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border); padding: 10px; box-sizing: border-box; overflow: hidden;">
+                            <svg id="diagnostics-chart" viewBox="0 0 600 180" width="100%" height="100%" preserveAspectRatio="none" style="overflow: visible;">
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="30" x2="600" y2="30" stroke="var(--border)" stroke-width="1"/>
+                                <line x1="0" y1="90" x2="600" y2="90" stroke="var(--border)" stroke-width="1"/>
+                                <line x1="0" y1="150" x2="600" y2="150" stroke="var(--border)" stroke-width="1"/>
+                                
+                                <!-- Baseline Shadow Fill Path -->
+                                <path id="chart-fill-path" d="" fill="url(#chart-gradient)" opacity="0.15"/>
+                                
+                                <!-- Main Latency Cubic Bezier Curve -->
+                                <path id="chart-line-path" d="" fill="none" stroke="#d4af37" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                
+                                <!-- Hover Plot Circles -->
+                                <g id="chart-data-nodes"></g>
+                                
+                                <!-- SVG Gradient definitions -->
+                                <defs>
+                                    <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#d4af37"/>
+                                        <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Telemetry Type</th>
+                                <th>Quality Metric</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-diagnostics-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Security Audits -->
+            <div id="admin-security-tab" class="admin-tab-content">
+                <div class="admin-metrics-grid" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: var(--accent-glow); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🔑</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-security-avg-key-age" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0.0 days</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Avg Key Age</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(239, 68, 68, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">⚠️</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-security-expired-keys" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0 / 0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Expired Keys (>30d)</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(168, 85, 247, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🔒</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-security-lockouts" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Active Lockouts</span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 16px;">
+                        <div class="metric-icon" style="font-size: 28px; background: rgba(236, 72, 153, 0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🚫</div>
+                        <div class="metric-data" style="display: flex; flex-direction: column;">
+                            <span id="metric-security-failed-logins" class="metric-val" style="font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; color: var(--text-primary);">0</span>
+                            <span class="metric-label" style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Failed Attempts (7d)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Semi-Circle Gauge Card & Compliance Controls -->
+                <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 24px;">
+                    <div class="invite-generation-card" style="flex: 1; min-width: 280px; margin-bottom: 0;">
+                        <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; min-height: 250px; text-align: center;">
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Security Integrity Rating</h3>
+                            <div class="gauge-container" style="position: relative; width: 220px; height: 120px; margin-top: 16px;">
+                                <!-- Semi-circle Gauge Arc -->
+                                <svg width="220" height="120" style="overflow: visible;">
+                                    <!-- Background Track -->
+                                    <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="var(--border)" stroke-width="14" stroke-linecap="round"/>
+                                    <!-- Health Track (Gold) -->
+                                    <path id="gauge-health-arc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gauge-gold-grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="0"/>
+                                    
+                                    <!-- Needle -->
+                                    <g id="gauge-needle-group" style="transform-origin: 110px 110px; transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1); transform: rotate(0deg);">
+                                        <line x1="110" y1="110" x2="110" y2="30" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0px 0px 5px var(--accent-glow))"/>
+                                        <circle cx="110" cy="110" r="8" fill="var(--accent)"/>
+                                    </g>
+                                    
+                                    <defs>
+                                        <linearGradient id="gauge-gold-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#ef4899"/>
+                                            <stop offset="50%" stop-color="var(--accent)"/>
+                                            <stop offset="100%" stop-color="#10b981"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <!-- Dynamic Score Grade Text -->
+                                <div style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <span id="security-health-grade" style="font-size: 38px; font-weight: 800; font-family: 'Outfit', sans-serif; background: linear-gradient(135deg, var(--text-primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px var(--accent-glow);">A+</span>
+                                    <span id="security-health-score" style="font-size: 13px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.5px; margin-top: -4px;">Score: 100/100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invite-generation-card" style="flex: 1.2; min-width: 320px; margin-bottom: 0;">
+                        <div class="card-body" style="padding: 24px; min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; font-family: 'Outfit', sans-serif;">🛡️ Cryptographic Compliance & Actions</h3>
+                                <p class="muted" style="margin-bottom: 20px; color: var(--text-secondary);">Manage organization key rotations and force identity health updates across all registered nodes.</p>
+                                
+                                <div class="compliance-details" style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                         <span class="muted" style="font-size: 13px; color: var(--text-secondary);">Organization Identity keys:</span>
+                                         <strong style="color: #10b981; font-size: 13px;">Zero-Trust Encrypted</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                         <span class="muted" style="font-size: 13px; color: var(--text-secondary);">Forward Secrecy Standard:</span>
+                                         <strong style="color: var(--accent); font-size: 13px;">ECDH Key Rotation</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                         <span class="muted" style="font-size: 13px; color: var(--text-secondary);">Key Compliance Status:</span>
+                                         <strong id="security-compliance-status" style="color: #10b981; font-size: 13px;">EXCELLENT</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <button id="btn-force-rotation-alert" class="btn btn-warning" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; height: 42px; border-radius: var(--radius-sm);">
+                                    <span>Force Global Key Rotation Alert</span>
+                                </button>
+                                <p class="muted" style="font-size: 11px; margin-top: 8px; text-align: center; margin-bottom: 0;">Triggers a persistent E2E key rotation alert inside the next active session for all platform users.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Events Table -->
+                <div class="table-container" style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 12px; font-size: 16px; font-family: 'Outfit', sans-serif;">🛡️ Security Audit Logs Timeline</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action Category</th>
+                                <th>Event Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-security-logs-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Feedback Hub -->
+            <div id="admin-feedback-tab" class="admin-tab-content">
+                <div class="feedback-list" id="admin-feedback-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Tab Content: Audit Trails -->
+            <div id="admin-logs-tab" class="admin-tab-content">
+                <div class="logs-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-logs-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

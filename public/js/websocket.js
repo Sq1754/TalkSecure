@@ -18,7 +18,7 @@ const VaultSocket = (() => {
         _intentionalClose = false;
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}`;
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
 
         try {
             _ws = new WebSocket(wsUrl);

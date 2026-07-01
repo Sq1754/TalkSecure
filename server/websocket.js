@@ -24,7 +24,7 @@ const WS_RATE_LIMIT = 60; // max messages per second
 const WS_RATE_WINDOW = 1000; // 1 second window
 
 function setupWebSocket(server) {
-    const wss = new WebSocketServer({ server, maxPayload: 35 * 1024 * 1024 }); // 35MB max payload to accommodate file attachments up to 25MB + Base64 overhead
+    const wss = new WebSocketServer({ server, path: '/ws', maxPayload: 35 * 1024 * 1024 }); // 35MB max payload to accommodate file attachments up to 25MB + Base64 overhead
 
     wss.on('connection', (ws, req) => {
         let userId = null;

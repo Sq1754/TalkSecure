@@ -25,7 +25,13 @@ if (fs.existsSync(envPath)) {
         }
     }
 } else {
-    console.error('❌ .env file not found. Run: npm run setup');
+    console.log('ℹ️ No .env file found. Proceeding using system environment variables.');
+}
+
+// Ensure critical variables are set
+if (!process.env.JWT_SECRET || !process.env.DB_ENCRYPTION_KEY) {
+    console.error('❌ Critical environment variables missing: JWT_SECRET or DB_ENCRYPTION_KEY is not set.');
+    console.error('Please configure these in your hosting environment variables (e.g. Render Dashboard).');
     process.exit(1);
 }
 
